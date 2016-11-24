@@ -1,0 +1,25 @@
+{
+  "name": "lnwirweb",
+  "version": "1.0.0",
+  "description": "<h1>System Requirements</h1>\r <h6>- JDK 1.8</h6>\r <h6>- Tomcat 9</h6>\r <hr>\r <h1>Configuration</h1>\r <h6>- You can change appTitle, indexLocation in configuration.jsp</h6>\r <hr>\r <h1>How to run</h1>\r <h6>- Put this folder in webapps folder of Tomcat</h6>\r <h6>- Start the server by double click bin/startup.bat to</h6>\r <h6>- Open http://localhost:8080/lnwirweb in your browser</h6>",
+  "main": "index.js",
+  "dependencies": {
+    "bulma": "^0.2.3",
+    "jquery": "^3.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LNWPOR/lnwirweb.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LNWPOR/lnwirweb/issues"
+  },
+  "homepage": "https://github.com/LNWPOR/lnwirweb#readme"
+}
