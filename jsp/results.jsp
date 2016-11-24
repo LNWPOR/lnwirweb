@@ -1,37 +1,6 @@
-<!--
-    Licensed to the Apache Software Foundation (ASF) under one or more
-    contributor license agreements.  See the NOTICE file distributed with
-    this work for additional information regarding copyright ownership.
-    The ASF licenses this file to You under the Apache License, Version 2.0
-    the "License"); you may not use this file except in compliance with
-    the License.  You may obtain a copy of the License at
- 
-        http://www.apache.org/licenses/LICENSE-2.0
- 
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
- -->
 <%@page pageEncoding="UTF-8"%>
 <%@ page import = "  javax.servlet.*, javax.servlet.http.*, java.io.*, java.net.URLEncoder, java.net.URLDecoder, java.nio.file.Paths, org.apache.lucene.analysis.Analyzer, org.apache.lucene.analysis.TokenStream, org.apache.lucene.analysis.standard.StandardAnalyzer, org.apache.lucene.analysis.th.ThaiAnalyzer, org.apache.lucene.document.Document, org.apache.lucene.index.DirectoryReader, org.apache.lucene.index.IndexReader, org.apache.lucene.queryparser.classic.QueryParser, org.apache.lucene.queryparser.classic.ParseException, org.apache.lucene.search.IndexSearcher, org.apache.lucene.search.Query, org.apache.lucene.search.ScoreDoc, org.apache.lucene.search.TopDocs, org.apache.lucene.search.highlight.Highlighter, org.apache.lucene.search.highlight.InvalidTokenOffsetsException, org.apache.lucene.search.highlight.QueryScorer, org.apache.lucene.search.highlight.SimpleFragmenter, org.apache.lucene.store.FSDirectory" %>
 
-<%
-/*
-        Author: Andrew C. Oliver, SuperLink Software, Inc. (acoliver2@users.sourceforge.net)
-
-        This jsp page is deliberatly written in the horrible java directly embedded 
-        in the page style for an easy and concise demonstration of Lucene.
-        Due note...if you write pages that look like this...sooner or later
-        you'll have a maintenance nightmare.  If you use jsps...use taglibs
-        and beans!  That being said, this should be acceptable for a small
-        page demonstrating how one uses Lucene in a web app. 
-
-        This is also deliberately overcommented. ;-)
-
-*/
-%>
 <%!
 public String escapeHTML(String s) {
   s = s.replaceAll("&", "&amp;");
@@ -154,10 +123,10 @@ public String escapeHTML(String s) {
                         <td><%=i+1%>&nbsp;&nbsp;</td><td><font color="blue"><b><%=doctitle%></b></font></td>
                 </tr>
                 <tr>
-		        <td></td><td><%=doc.get("contents")%></td>
+		                    <td></td><td><%=doc.get("contents")%></td>
                 </tr>
                 <tr>
-		        <td></td><td><a href=<%=doc.get("url")%> style="color:green;text-decoration: none;"><%=doc.get("url")%></a></td>
+		                    <td></td><td><a href=<%=doc.get("url")%> style="color:green;text-decoration: none;"><%=doc.get("url")%></a></td>
                 </tr>
                 <tr><td>&nbsp;</td><td></td></tr>
 <%
