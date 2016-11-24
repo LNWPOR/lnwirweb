@@ -54,7 +54,7 @@
       </div>
     </section>
     <footer class="modal-card-foot">
-      <h5 class="subtitle is-5">We are senior student of Faculty of Engineering Kasetsart University.</h5>
+      <h5 class="subtitle is-5">We are student of Faculty of Engineering Kasetsart University (CPE27).</h5>
     </footer>
   </div>
 </div>

@@ -1,6 +1,6 @@
 <nav class="nav has-shadow">
   <div class="nav-left">
-    <a class="nav-item" href="#">
+    <a class="nav-item" href="index.jsp">
       <h2 class="title is-2">LNWIRWEB</h2>
     </a>
   </div>
@@ -13,7 +13,7 @@
   </span>
 
   <div class="nav-right nav-menu">
-    <a class="nav-item" href="#">
+    <a class="nav-item" href="index.jsp">
       <h3 class="subtitle is-3">Home</h3>
     </a>
     <a class="nav-item" href="#">
