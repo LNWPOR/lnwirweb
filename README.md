@@ -2,6 +2,9 @@
 <h6>- JDK 1.8</h6>
 <h6>- Tomcat 9</h6>
 <hr>
+<h1>Configuration</h1>
+<h6>- You can change appTitle, indexLocation and appfooter in configuration.jsp</h6>
+<hr>
 <h1>How to run</h1>
 <h6>- put this folder in webapps folder of Tomcat</h6>
 <h6>- start the server by double click bin/startup.bat to</h6>
