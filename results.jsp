@@ -136,7 +136,11 @@ public String escapeHTML(String s) {
 <%
                         Document doc = searcher.doc(hits.scoreDocs[i].doc);                    //get the next document 
                         String doctitle = doc.get("title");            //get its title
-                        String path = doc.get("path");                  //get its path field
+                        String path = doc.get("path");
+                        String docContents = doc.get("docContents");
+                        String snippet = doc.get("snippet");
+                        String url = doc.get("URL");
+
                         if (path != null && path.startsWith("../webapps/")) { // strip off ../webapps prefix if present
                                 path = path.substring(10);
                         }
@@ -153,15 +157,64 @@ public String escapeHTML(String s) {
 
                     <div class="media-content">
                       <div class="content">
-                        <h4 class="title is-4"  style="color: blue;">
-                          <%=doctitle%>
-                        <h4>
+                        <a href=<%=url%> >
+                          <h4 class="title is-4"  style="color: blue;">
+                            <%=doctitle%>
+                          <h4>
+                        </a>
                         <h4 class="subtitle">
-                          <%=doc.get("snippet")%>
+                          <!-- <%=snippet%> -->
+<%
+                        int index = docContents.indexOf(queryString);
+                        if(index != -1){
+                          String newSnippet = "";
+                          int range = 500;
+                          int startIndex;
+                          int endIndex;
+                          
+                          //check range
+                          if(index - range < 0){
+                            startIndex = 0;
+                          }else{
+                            startIndex = index - range;
+                          }
+                          if(index + queryString.length() + range > docContents.length() - 1){
+                            endIndex = docContents.length() - 1;
+                          }else{
+                            endIndex = index + queryString.length() + range;
+                          }
+                          
+                          //insert highlight
+                          for (int j = startIndex; j < endIndex; j++) {
+                            if(j == index - 1){
+                              newSnippet += "<B style=\"color: red;\"> ";
+                            }
+                            else if(j == index + queryString.length()){
+                              newSnippet += " </B>";
+                            }
+                            else{
+                              newSnippet += docContents.charAt(j);
+                            }
+                          }
+%>
+                          <%=newSnippet%>
+<%
+                        }else{
+                          if (snippet != null) {
+%>
+                            <%=snippet%>
+<%
+                            }else{
+%>
+                              No Snippet
+<%                            
+                            }
+                        }    
+%>
                         </h4>
-                        <a href=<%=doc.get("URL")%> >
+                        <a href=<%=url%> >
                           <h4 class="subtitle" style="color: green;">
-                            <%=doc.get("URL")%>
+                            <%=url%>
                           </h4>
                         </a>
                       </div>
