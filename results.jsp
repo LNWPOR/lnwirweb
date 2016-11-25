@@ -121,7 +121,7 @@ public String escapeHTML(String s) {
                     <h6 class="subtitle">Searching for
                       <span class="title is-4">"<%=queryString%>" </span>
                       by 
-                      <span class="title is-4"> "<%=search_method%>"</span>
+                      <span class="title is-4"> "<%=search_method%>".</span>
                     </h6>
                   </div>
                 </div>
