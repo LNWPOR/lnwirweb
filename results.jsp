@@ -102,27 +102,28 @@ if (error == false ) {                                  //did we open the index?
   } catch (Exception e) { }                             //we don't care if something happens we'll just start at 0
                                                         //or end at 50
   if (queryString == null)
-          throw new ServletException("no query "+       //if you don't have a query then
-                                     "specified");      //you probably played on the 
+    throw new ServletException("no query "+             //if you don't have a query then
+                               "specified");            //you probably played on the 
                                                         //query string so you get the 
                                                         //treatment
-%>
-  <div class="notification is-info">
-    <div class="container">
-      <h6 class="subtitle">Searching for
-        <span class="title is-4">"<%=queryString%>" </span>
-        by 
-        <span class="title is-4"> "<%=search_method%>".</span>
-      </h6>
-    </div>
-  </div>
-<%
   //Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT); //construct our usual analyzer
   Analyzer analyzer = new ThaiAnalyzer();
   try {
-          QueryParser qp = new QueryParser("contents", analyzer);
-          query = qp.parse(queryString.trim());         //parse the 
-  } catch (ParseException e) {                          //query and construct the Query
+    QueryParser qp = new QueryParser("contents", analyzer);
+    query = qp.parse(queryString.trim());         
+%>
+    <div class="notification is-info">
+      <div class="container">
+        <h6 class="subtitle">Searching for
+          <span class="title is-4">"<%=queryString%>" </span>
+          by 
+          <span class="title is-4"> "<%=search_method%>".</span>
+        </h6>
+      </div>
+    </div>
+<%
+  } catch (ParseException e) {                          //parse the
+                                                        //query and construct the Query
                                                         //object
                                                         //if it's just "operator error"
                                                         //send them a nice error HTML                              
