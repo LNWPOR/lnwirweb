@@ -45,12 +45,14 @@ private static Map<Document, Float> sortByValue(Map<Document, Float> unsortMap) 
   return sortedMap;
 }
 
+/*
 public static <K, V> void printMap(Map<K, V> map) {
   for (Map.Entry<K, V> entry : map.entrySet()) {
       System.out.println("Key : " + entry.getKey()
               + " Value : " + entry.getValue());
   }
 }
+*/
 %>
 <%
 boolean error = false;                  //used to control flow for error messages
@@ -104,6 +106,17 @@ if (error == false ) {                                  //did we open the index?
                                      "specified");      //you probably played on the 
                                                         //query string so you get the 
                                                         //treatment
+%>
+  <div class="notification is-info">
+    <div class="container">
+      <h6 class="subtitle">Searching for
+        <span class="title is-4">"<%=queryString%>" </span>
+        by 
+        <span class="title is-4"> "<%=search_method%>".</span>
+      </h6>
+    </div>
+  </div>
+<%
   //Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT); //construct our usual analyzer
   Analyzer analyzer = new ThaiAnalyzer();
   try {
@@ -133,11 +146,7 @@ if (error == false && searcher != null) {               // if we've had no error
   hits = searcher.search(query, maxpage + startindex);  // run the query 
   if (hits.totalHits == 0) {                            // if we got no results tell the user
 %>
-    <div class="notification is-danger">
-      <div class="container">
-        <h6 class="subtitle">I'm sorry I couldn't find what you were looking for. Prease type a new keyword.</h6>
-      </div>
-    </div>
+    <%@include file="jsp/cannotFind.jsp"%>
 <%
     error = true;                                         // don't bother with the rest of the
                                                           // page
@@ -145,17 +154,6 @@ if (error == false && searcher != null) {               // if we've had no error
 }
 
 if (error == false && searcher != null) {                   
-%>
-  <div class="notification is-info">
-    <div class="container">
-      <h6 class="subtitle">Searching for
-        <span class="title is-4">"<%=queryString%>" </span>
-        by 
-        <span class="title is-4"> "<%=search_method%>".</span>
-      </h6>
-    </div>
-  </div>
-<%
   //Create doc map that sort by PageRank score of each document.
   Map<Document, Float> docPageRankMap = new HashMap<Document, Float>();
   for(int i = 0; i< hits.totalHits - 1; i++){
@@ -163,10 +161,34 @@ if (error == false && searcher != null) {
     if(doc.get("PageRank") != null){
       docPageRankMap.put(doc, Float.parseFloat(doc.get("PageRank")));
     }
+    else{
+      continue;
+    }
   }
   Map<Document, Float> docSortByPageRankMap = sortByValue(docPageRankMap);
-  //out.println(docSortByPageRankMap);
-  List<Document> docKeyList = new ArrayList<Document>(docSortByPageRankMap.keySet());
+  List<Document> docSortByPageRankKeyList = new ArrayList<Document>(docSortByPageRankMap.keySet());
+
+  //Create doc map that sort by mix score of each document.
+  Map<Document, Float> docMixScoreMap = new HashMap<Document, Float>();
+  for(int i = 0; i < hits.totalHits - 1; i++){
+    Document doc = searcher.doc(i);
+    if(doc.get("PageRank") != null){
+      if(hits.scoreDocs[i].score != 0.0f){
+        float pr = Float.parseFloat(doc.get("PageRank"));
+        float sim = hits.scoreDocs[i].score;
+        float alpha = 0.5f; //where 0 ≤ α,β ≤ 1 and α+β = 1
+        float beta = 0.5f;
+        float mixScore = alpha*sim + (1-alpha)*pr;
+        docMixScoreMap.put(doc, mixScore);
+      }else{
+        continue;
+      }
+    }else{
+      continue;
+    }
+  }
+  Map<Document, Float> docSortByMixScoreMap = sortByValue(docMixScoreMap);
+  List<Document> docSortByMixScoreKeyList = new ArrayList<Document>(docSortByMixScoreMap.keySet());
 
   if ((startindex + maxpage) > hits.totalHits) {
           thispage = hits.totalHits - startindex;      // set the max index to maxpage or last
@@ -184,10 +206,40 @@ if (error == false && searcher != null) {
       else{
         continue;
       }
-    }else{ //search_method.equals("PageRank")                     
+    }else if (search_method.equals("PageRank")){ //search_method.equals("PageRank")
+      if(docSortByPageRankMap.size() == 0){
+%>
+        <%@include file="jsp/cannotFind.jsp"%>
+<%
+        break;
+      }                     
       int revertDocIndex = docSortByPageRankMap.size() - 1 - i;
-      doc = docKeyList.get(revertDocIndex);
-      scoreShow = doc.get("PageRank");
+      if(revertDocIndex < 0){
+        break;
+      }
+      if(docSortByPageRankKeyList.get(revertDocIndex) != null){
+        doc = docSortByPageRankKeyList.get(revertDocIndex);
+        scoreShow = doc.get("PageRank");
+      }else{
+        continue;
+      }
+    }else{ //search_method.equals("MixScore") 
+      if(docSortByPageRankMap.size() == 0){
+%>
+        <%@include file="jsp/cannotFind.jsp"%>
+<%
+        break;
+      }   
+      int revertDocIndex = docSortByMixScoreMap.size() - 1 - i;
+      if(revertDocIndex < 0){
+        break;
+      }
+      if(docSortByMixScoreKeyList.get(revertDocIndex) != null){
+        doc = docSortByMixScoreKeyList.get(revertDocIndex);
+        scoreShow = Float.toString(docSortByMixScoreMap.get(doc));
+      }else{
+        continue;
+      }
     }
     
     String doctitle = doc.get("title");            //get its title
@@ -198,10 +250,10 @@ if (error == false && searcher != null) {
     //String pageRank = doc.get("PageRank");
 
     if (path != null && path.startsWith("../webapps/")) { // strip off ../webapps prefix if present
-            path = path.substring(10);
+      path = path.substring(10);
     }
     if ((doctitle == null) || doctitle.equals("")) //use the path if it has no title
-            doctitle = path;
+      doctitle = path;
 %>
     <div class="box">
       <article class="media">
