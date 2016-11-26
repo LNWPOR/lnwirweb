@@ -3,7 +3,7 @@
 <%@include file="jsp/navbar.jsp"%>
 <%@include file="jsp/info-section.jsp"%>
 <%@include file="jsp/search-section.jsp"%>
-<%@ page import = "  javax.servlet.*, javax.servlet.http.*, java.io.*, java.net.URLEncoder, java.net.URLDecoder, java.nio.file.Paths, org.apache.lucene.analysis.Analyzer, org.apache.lucene.analysis.TokenStream, org.apache.lucene.analysis.standard.StandardAnalyzer, org.apache.lucene.analysis.th.ThaiAnalyzer, org.apache.lucene.document.Document, org.apache.lucene.index.DirectoryReader, org.apache.lucene.index.IndexReader, org.apache.lucene.queryparser.classic.QueryParser, org.apache.lucene.queryparser.classic.ParseException, org.apache.lucene.search.IndexSearcher, org.apache.lucene.search.Query, org.apache.lucene.search.ScoreDoc, org.apache.lucene.search.TopDocs, org.apache.lucene.search.highlight.Highlighter, org.apache.lucene.search.highlight.InvalidTokenOffsetsException, org.apache.lucene.search.highlight.QueryScorer, org.apache.lucene.search.highlight.SimpleFragmenter, org.apache.lucene.store.FSDirectory" %>
+<%@ page import = "  javax.servlet.*, javax.servlet.http.*, java.io.*, java.net.URLEncoder, java.net.URLDecoder, java.nio.file.Paths, org.apache.lucene.analysis.Analyzer, org.apache.lucene.analysis.TokenStream, org.apache.lucene.analysis.standard.StandardAnalyzer, org.apache.lucene.analysis.th.ThaiAnalyzer, org.apache.lucene.document.Document, org.apache.lucene.index.DirectoryReader, org.apache.lucene.index.IndexReader, org.apache.lucene.queryparser.classic.QueryParser, org.apache.lucene.queryparser.classic.ParseException, org.apache.lucene.search.IndexSearcher, org.apache.lucene.search.Query, org.apache.lucene.search.ScoreDoc, org.apache.lucene.search.TopDocs, org.apache.lucene.search.highlight.Highlighter, org.apache.lucene.search.highlight.InvalidTokenOffsetsException, org.apache.lucene.search.highlight.QueryScorer, org.apache.lucene.search.highlight.SimpleFragmenter, org.apache.lucene.store.FSDirectory, java.util.HashMap, java.util.Map ,java.util.List, java.util.LinkedList, java.util.Collections, java.util.Comparator, java.util.LinkedHashMap, java.util.ArrayList" %>
 
 <%!
 public String escapeHTML(String s) {
@@ -14,6 +14,46 @@ public String escapeHTML(String s) {
   s = s.replaceAll("'", "&apos;");
   return s;
 }
+%>
+
+<%!
+private static Map<Document, Float> sortByValue(Map<Document, Float> unsortMap) {
+  // 1. Convert Map to List of Map
+  List<Map.Entry<Document, Float>> list =
+          new LinkedList<Map.Entry<Document, Float>>(unsortMap.entrySet());
+
+  // 2. Sort list with Collections.sort(), provide a custom Comparator
+  //    Try switch the o1 o2 position for a different order
+  Collections.sort(list, new Comparator<Map.Entry<Document, Float>>() {
+      public int compare(Map.Entry<Document, Float> o1,
+                         Map.Entry<Document, Float> o2) {
+          return (o1.getValue()).compareTo(o2.getValue());
+      }
+  });
+
+  // 3. Loop the sorted list and put it into a new insertion order Map LinkedHashMap
+  Map<Document, Float> sortedMap = new LinkedHashMap<Document, Float>();
+  for (Map.Entry<Document, Float> entry : list) {
+      sortedMap.put(entry.getKey(), entry.getValue());
+  }
+
+  /*
+  //classic iterator example
+  for (Iterator<Map.Entry<String, Integer>> it = list.iterator(); it.hasNext(); ) {
+      Map.Entry<String, Integer> entry = it.next();
+      sortedMap.put(entry.getKey(), entry.getValue());
+  }*/
+
+  return sortedMap;
+}
+
+public static <K, V> void printMap(Map<K, V> map) {
+  for (Map.Entry<K, V> entry : map.entrySet()) {
+      System.out.println("Key : " + entry.getKey()
+              + " Value : " + entry.getValue());
+  }
+}
+
 %>
 
 <%
@@ -60,7 +100,7 @@ public String escapeHTML(String s) {
 
                 try {
                         maxpage    = Integer.parseInt(maxresults);    //parse the max results first
-                        startindex = Integer.parseInt(startVal);      //then the start index  
+                        startindex = Integer.parseInt(startVal);      //then the start index 
                 } catch (Exception e) { } //we don't care if something happens we'll just start at 0
                                           //or end at 50
 
@@ -126,33 +166,60 @@ public String escapeHTML(String s) {
                   </div>
                 </div>
 <%
+                //Create doc map that sort by PageRank score of each document.
+                Map<Document, Float> docPageRankMap = new HashMap<Document, Float>();
+                for(int i = 0; i< hits.totalHits - 1; i++){
+                  Document doc = searcher.doc(i);
+                  if(doc.get("PageRank") != null){
+                    docPageRankMap.put(doc, Float.parseFloat(doc.get("PageRank")));
+                  }
+                }
+                Map<Document, Float> docSortByPageRankMap = sortByValue(docPageRankMap);
+                //out.println(docSortByPageRankMap);
+                List<Document> docKeyList = new ArrayList<Document>(docSortByPageRankMap.keySet());
+
                 if ((startindex + maxpage) > hits.totalHits) {
                         thispage = hits.totalHits - startindex;      // set the max index to maxpage or last
                 }                                                   // actual search result whichever is less
 
                 for (int i = startindex; i < (thispage + startindex); i++) {  // for each element
-%>
+                  //Document doc = searcher.doc(hits.scoreDocs[i].doc);                     //get the next document 
+                  Document doc;
+                  String scoreShow;
+                  if(search_method.equals("Similarity")){
+                    if(searcher.doc(hits.scoreDocs[i].doc).get("PageRank") != null){
+                      doc = searcher.doc(hits.scoreDocs[i].doc);
+                      scoreShow = Float.toString(hits.scoreDocs[i].score); 
+                    }
+                    else{
+                      continue;
+                    }
+                  }else{ //search_method.equals("PageRank")                     
+                    int revertDocIndex = docSortByPageRankMap.size() - 1 - i;
+                    doc = docKeyList.get(revertDocIndex);
+                    scoreShow = doc.get("PageRank");
+                  }
+                  
+                  String doctitle = doc.get("title");            //get its title
+                  String path = doc.get("path");
+                  String docContents = doc.get("docContents");
+                  String snippet = doc.get("snippet");
+                  String url = doc.get("URL");
+                  //String pageRank = doc.get("PageRank");
 
-<%
-                        Document doc = searcher.doc(hits.scoreDocs[i].doc);                    //get the next document 
-                        String doctitle = doc.get("title");            //get its title
-                        String path = doc.get("path");
-                        String docContents = doc.get("docContents");
-                        String snippet = doc.get("snippet");
-                        String url = doc.get("URL");
-
-                        if (path != null && path.startsWith("../webapps/")) { // strip off ../webapps prefix if present
-                                path = path.substring(10);
-                        }
-                        if ((doctitle == null) || doctitle.equals("")) //use the path if it has no title
-                                doctitle = path;
-                                                                       //then output!
+                  if (path != null && path.startsWith("../webapps/")) { // strip off ../webapps prefix if present
+                          path = path.substring(10);
+                  }
+                  if ((doctitle == null) || doctitle.equals("")) //use the path if it has no title
+                          doctitle = path;
 %>
                 <div class="box">
                   <article class="media">
                     
                     <div class="media-left">
                       <h1 class="title"><%=i+1%></h1>
+                      <h1 class="subtitle"><%=search_method%></h1>
+                      <h1 class="subtitle"><%=scoreShow%></h1>
                     </div>
 
                     <div class="media-content">
@@ -231,7 +298,8 @@ public String escapeHTML(String s) {
                         String moreurl="results.jsp?query=" + 
                                        URLEncoder.encode(queryString) +  //construct the "more" link
                                        "&amp;maxresults=" + maxpage + 
-                                       "&amp;startat=" + (startindex + maxpage);
+                                       "&amp;startat=" + (startindex + maxpage) +
+                                       "&amp;search_method=" + search_method;
 %>
                     <div class="box">
                       <article class="media">

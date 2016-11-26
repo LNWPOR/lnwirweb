@@ -12,7 +12,7 @@
                 <input class="button is-info is-large" type="submit" value="Search">
                 <span class="select is-info is-large">
                     <select name="search_method">
-                        <option value="Similarity">Similarity</option>
+                        <option value="Similarity" selected="selected">Similarity</option>
                         <option value="PageRank">PageRank</option>
                     </select>
                 </span>
