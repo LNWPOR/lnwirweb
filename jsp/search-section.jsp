@@ -19,8 +19,13 @@
                 </span>
             </p>
             <p>
-                <input lass="is-info" name="maxresults" size="4" value="10"/>&nbsp;<span  class="subtitle">Results Per Page</span>
+                <input lass="is-info" name="alpha" size="4" value="0.5"/>&nbsp;<span class="subtitle">alpha</span>
+                <input lass="is-info" name="beta" size="4" value="0.5"/>&nbsp;<span class="subtitle">beta</span>
+                <input lass="is-info" name="maxresults" size="4" value="10"/>&nbsp;<span class="subtitle">Results Per Page</span>
             </p>
+            <h6 class="subtitle">
+              Note : alpha and beta only work when search with MixScore method. And the sum of them must equal 1.
+            </h6>
         </form>
     </div>
 </section>

@@ -69,6 +69,8 @@ int thispage = 0;                       //used for the for/next either maxpage o
                                         //hits.totalHits - startindex - whichever is
                                         //less
 String search_method = null;
+float alpha = 0.0f;
+float beta = 0.0f;
 
 try {
   IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexName)));
@@ -95,10 +97,12 @@ if (error == false ) {                                  //did we open the index?
   startVal    = request.getParameter("startat");        //get the start index
   maxresults  = request.getParameter("maxresults");     //get max results per page
   search_method = request.getParameter("search_method");
-
+  alpha = Float.parseFloat(request.getParameter("alpha"));
+  beta = Float.parseFloat(request.getParameter("beta"));
   try {
-          maxpage    = Integer.parseInt(maxresults);    //parse the max results first
-          startindex = Integer.parseInt(startVal);      //then the start index 
+    maxpage    = Integer.parseInt(maxresults);    //parse the max results first
+    startindex = Integer.parseInt(startVal);      //then the start index
+    
   } catch (Exception e) { }                             //we don't care if something happens we'll just start at 0
                                                         //or end at 50
   if (queryString == null)
@@ -117,7 +121,15 @@ if (error == false ) {                                  //did we open the index?
         <h6 class="subtitle">Searching for
           <span class="title is-4">"<%=queryString%>" </span>
           by 
-          <span class="title is-4"> "<%=search_method%>".</span>
+          <span class="title is-4"> "<%=search_method%>".
+<%
+    if(search_method.equals("MixScore")){
+%>
+      alpha = <%=alpha%>, beta = <%=beta%>
+<%
+    }
+%>
+          
         </h6>
       </div>
     </div>
@@ -154,6 +166,17 @@ if (error == false && searcher != null) {               // if we've had no error
   }
 }
 
+if(search_method.equals("MixScore") && alpha + beta != 1.0f){
+  error = true;
+%>
+  <div class="notification is-danger">
+    <div class="container">
+      <h6 class="subtitle">The sum of alpha and beta must equal to 1. Prease try again.</h6>
+    </div>
+  </div>
+<%
+}
+
 if (error == false && searcher != null) {                   
   //Create doc map that sort by PageRank score of each document.
   Map<Document, Float> docPageRankMap = new HashMap<Document, Float>();
@@ -177,8 +200,8 @@ if (error == false && searcher != null) {
       if(hits.scoreDocs[i].score != 0.0f){
         float pr = Float.parseFloat(doc.get("PageRank"));
         float sim = hits.scoreDocs[i].score;
-        float alpha = 0.5f; //where 0 ≤ α,β ≤ 1 and α+β = 1
-        float beta = 0.5f;
+        //float alpha = 0.5f; //where 0 ≤ α,β ≤ 1 and α+β = 1
+        //float beta = 0.5f;
         float mixScore = alpha*sim + (1-alpha)*pr;
         docMixScoreMap.put(doc, mixScore);
       }else{
