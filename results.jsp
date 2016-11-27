@@ -394,8 +394,8 @@ if (error == false && searcher != null) {
 <%                
   if ( (startindex + maxpage) < hits.totalHits) {   //if there are more results...display 
                                                     //the more link
-    String moreurl="results.jsp?query=" + 
-                   URLEncoder.encode(queryString) +  //construct the "more" link
+    String moreurl="results.jsp?query=" + queryString +
+                   //URLEncoder.encode(queryString) +  //construct the "more" link
                    "&amp;maxresults=" + maxpage + 
                    "&amp;startat=" + (startindex + maxpage) +
                    "&amp;search_method=" + search_method +
