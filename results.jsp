@@ -197,7 +197,7 @@ if (error == false && searcher != null) {
   for(int i = 0; i < hits.totalHits - 1; i++){
     Document doc = searcher.doc(i);
     if(doc.get("PageRank") != null){
-      if(hits.scoreDocs[i].score != 0.0f){
+      if(i < hits.scoreDocs.length){
         float pr = Float.parseFloat(doc.get("PageRank"));
         float sim = hits.scoreDocs[i].score;
         //float alpha = 0.5f; //where 0 ≤ α,β ≤ 1 and α+β = 1
