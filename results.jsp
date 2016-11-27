@@ -102,7 +102,7 @@ if (error == false ) {                                  //did we open the index?
   try {
     maxpage    = Integer.parseInt(maxresults);    //parse the max results first
     startindex = Integer.parseInt(startVal);      //then the start index
-    
+
     
   } catch (Exception e) { }                             //we don't care if something happens we'll just start at 0
                                                         //or end at 50
@@ -398,7 +398,9 @@ if (error == false && searcher != null) {
                    URLEncoder.encode(queryString) +  //construct the "more" link
                    "&amp;maxresults=" + maxpage + 
                    "&amp;startat=" + (startindex + maxpage) +
-                   "&amp;search_method=" + search_method;
+                   "&amp;search_method=" + search_method +
+                   "&amp;alpha=" + alpha +
+                   "&amp;beta=" + beta;
 %>
     <div class="box">
       <article class="media">
