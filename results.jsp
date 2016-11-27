@@ -111,7 +111,8 @@ if (error == false ) {                                  //did we open the index?
                                                         //query string so you get the 
                                                         //treatment
   //Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT); //construct our usual analyzer
-  Analyzer analyzer = new ThaiAnalyzer();
+  Analyzer analyzer = new StandardAnalyzer();
+  //Analyzer analyzer = new ThaiAnalyzer();
   try {
     QueryParser qp = new QueryParser("contents", analyzer);
     query = qp.parse(queryString.trim());         
