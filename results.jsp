@@ -290,6 +290,8 @@ if (error == false && searcher != null) {
     String url = doc.get("URL");
     //String pageRank = doc.get("PageRank");
 
+    //out.println(docContents);
+
     if (path != null && path.startsWith("../webapps/")) { // strip off ../webapps prefix if present
       path = path.substring(10);
     }
@@ -315,10 +317,10 @@ if (error == false && searcher != null) {
             <h4 class="subtitle">
               <!-- <%=snippet%> -->
 <%
-    
-    String docContentsNoTitle = docContents.substring(doctitle.length(), docContents.length());
-    int index = docContentsNoTitle.indexOf(queryString);
-    if(index != -1){
+    int indexDocs = docContents.indexOf(queryString); 
+    if(indexDocs != -1){
+      String docContentsNoURLandTitle = docContents.substring(url.length() + doctitle.length(), docContents.length());
+      int index = docContentsNoURLandTitle.indexOf(queryString);
       String newSnippet = "";
       int range = 500;
       int startIndex;
@@ -330,8 +332,8 @@ if (error == false && searcher != null) {
       }else{
         startIndex = index - range;
       }
-      if(index + queryString.length() + range > docContentsNoTitle.length() - 1){
-        endIndex = docContentsNoTitle.length() - 1;
+      if(index + queryString.length() + range > docContentsNoURLandTitle.length() - 1){
+        endIndex = docContentsNoURLandTitle.length() - 1;
       }else{
         endIndex = index + queryString.length() + range;
       }
@@ -339,15 +341,15 @@ if (error == false && searcher != null) {
       //insert highlight
       for (int j = startIndex; j < endIndex; j++) {
         if(j == index - 1){
-          newSnippet += docContentsNoTitle.charAt(j);
+          newSnippet += docContentsNoURLandTitle.charAt(j);
           newSnippet += "<B style=\"color: red;\">";
         }
         else if(j == index + queryString.length()){
           newSnippet += "</B>";
-          newSnippet += docContentsNoTitle.charAt(j);
+          newSnippet += docContentsNoURLandTitle.charAt(j);
         }
         else{
-          newSnippet += docContentsNoTitle.charAt(j);
+          newSnippet += docContentsNoURLandTitle.charAt(j);
         }
       }
 %>

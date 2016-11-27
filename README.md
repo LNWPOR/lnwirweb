@@ -9,7 +9,7 @@
 <h1>How to run</h1>
 <h6>- Put this folder in webapps folder of Tomcat</h6>
 <h6>- npm install</h6>
-<h6>- Start the server by double click bin/startup.bat to</h6>
+<h6>- Start the server by double click bin/startup.bat</h6>
 <h6>- Open http://localhost:8080/lnwirweb in your browser</h6>
 <hr>
 <h1>Power by</h1>
