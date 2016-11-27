@@ -315,11 +315,8 @@ if (error == false && searcher != null) {
             <h4 class="subtitle">
               <!-- <%=snippet%> -->
 <%
-    StringBuilder sb = new StringBuilder(docContents);
-    for(int j = 0; j < doctitle.length() ;j++){
-      sb.deleteCharAt(j);
-    }
-    String docContentsNoTitle = sb.toString();
+    
+    String docContentsNoTitle = docContents.substring(doctitle.length(), docContents.length());
     int index = docContentsNoTitle.indexOf(queryString);
     if(index != -1){
       String newSnippet = "";
