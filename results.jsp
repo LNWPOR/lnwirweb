@@ -329,7 +329,7 @@ if (error == false && searcher != null) {
 <%
     int indexDocs = docContents.indexOf(queryString); 
     if(indexDocs != -1){
-      String docContentsNoURLandTitle = docContents.substring(url.length() + doctitle.length(), docContents.length());
+      String docContentsNoURLandTitle = docContents.substring(url.length() + doc.get("title").length(), docContents.length());
       int index = docContentsNoURLandTitle.indexOf(queryString);
       String newSnippet = "";
       int range = 500;
