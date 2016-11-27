@@ -198,16 +198,32 @@ if (error == false && searcher != null) {
   for(int i = 0; i < hits.totalHits - 1; i++){
     Document doc = searcher.doc(i);
     if(doc.get("PageRank") != null){
-      if(i < hits.scoreDocs.length){
+      for(int j = 0; j < hits.scoreDocs.length; j++){
+        if(doc.get("URL").equals(searcher.doc(hits.scoreDocs[j].doc).get("URL"))){
+          float pr = Float.parseFloat(doc.get("PageRank"));
+          float sim = hits.scoreDocs[j].score;
+          //out.println(doc.get("URL"));
+          //out.println("gg");
+          //out.println(searcher.doc(hits.scoreDocs[j].doc).get("URL"));
+          //float alpha = 0.5f; //where 0 ≤ α,β ≤ 1 and α+β = 1
+          //float beta = 0.5f;
+          float mixScore = alpha*sim + (1-alpha)*pr;
+          docMixScoreMap.put(doc, mixScore);
+        }
+      }
+      /*if(i < hits.scoreDocs.length){
         float pr = Float.parseFloat(doc.get("PageRank"));
         float sim = hits.scoreDocs[i].score;
+        out.println(doc.get("URL"));
+        out.println("gg");
+        out.println(searcher.doc(hits.scoreDocs[i].doc).get("URL"));
         //float alpha = 0.5f; //where 0 ≤ α,β ≤ 1 and α+β = 1
         //float beta = 0.5f;
         float mixScore = alpha*sim + (1-alpha)*pr;
         docMixScoreMap.put(doc, mixScore);
       }else{
         continue;
-      }
+      }*/
     }else{
       continue;
     }
