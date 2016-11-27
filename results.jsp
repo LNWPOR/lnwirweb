@@ -315,7 +315,12 @@ if (error == false && searcher != null) {
             <h4 class="subtitle">
               <!-- <%=snippet%> -->
 <%
-    int index = docContents.indexOf(queryString);
+    StringBuilder sb = new StringBuilder(docContents);
+    for(int j = 0; j < doctitle.length() ;j++){
+      sb.deleteCharAt(j);
+    }
+    String docContentsNoTitle = sb.toString();
+    int index = docContentsNoTitle.indexOf(queryString);
     if(index != -1){
       String newSnippet = "";
       int range = 500;
@@ -328,8 +333,8 @@ if (error == false && searcher != null) {
       }else{
         startIndex = index - range;
       }
-      if(index + queryString.length() + range > docContents.length() - 1){
-        endIndex = docContents.length() - 1;
+      if(index + queryString.length() + range > docContentsNoTitle.length() - 1){
+        endIndex = docContentsNoTitle.length() - 1;
       }else{
         endIndex = index + queryString.length() + range;
       }
@@ -337,13 +342,15 @@ if (error == false && searcher != null) {
       //insert highlight
       for (int j = startIndex; j < endIndex; j++) {
         if(j == index - 1){
-          newSnippet += "<B style=\"color: red;\"> ";
+          newSnippet += docContentsNoTitle.charAt(j);
+          newSnippet += "<B style=\"color: red;\">";
         }
         else if(j == index + queryString.length()){
-          newSnippet += " </B>";
+          newSnippet += "</B>";
+          newSnippet += docContentsNoTitle.charAt(j);
         }
         else{
-          newSnippet += docContents.charAt(j);
+          newSnippet += docContentsNoTitle.charAt(j);
         }
       }
 %>
