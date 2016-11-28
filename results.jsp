@@ -313,7 +313,8 @@ if (error == false && searcher != null) {
       path = path.substring(10);
     }
     if ((doctitle == null) || doctitle.equals("")) //use the path if it has no title
-      doctitle = path;
+      //doctitle = path;
+      doctitle = url;
 %>
     <div class="box">
       <article class="media">
