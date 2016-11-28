@@ -5,6 +5,7 @@
 <hr>
 <h1>Configuration</h1>
 <h6>- You can change appTitle, indexLocation in configuration.jsp</h6>
+<h6>- Index : https://drive.google.com/file/d/0B9O0qfX4FFUwVEtTRmthZUcwU0k/view?usp=sharing</h6>
 <hr>
 <h1>How to run</h1>
 <h6>- Put this folder in webapps folder of Tomcat</h6>
@@ -17,3 +18,6 @@
 <h6>- JSP</h6>
 <h6>- Bulma</h6>
 <h6>- Jquery</h6>
+<h6>- C#</h6>
+<h6>- Java</h6>
+<h6>- Python</h6>
