@@ -241,8 +241,10 @@ if (error == false && searcher != null) {
   Map<Document, Float> docSortByMixScoreMap = sortByValue(docMixScoreMap);
   List<Document> docSortByMixScoreKeyList = new ArrayList<Document>(docSortByMixScoreMap.keySet());
 
-  if ((startindex + maxpage) > hits.totalHits) {
-          thispage = hits.totalHits - startindex;      // set the max index to maxpage or last
+  //if ((startindex + maxpage) > hits.totalHits) {
+  if ((startindex + maxpage) > hits.scoreDocs.length) {
+          thispage = hits.scoreDocs.length - startindex;
+          //thispage = hits.totalHits - startindex;      // set the max index to maxpage or last
   }                                                   // actual search result whichever is less
 
   for (int i = startindex; i < (thispage + startindex); i++) {  // for each element
