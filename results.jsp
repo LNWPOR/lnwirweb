@@ -71,6 +71,7 @@ int thispage = 0;                       //used for the for/next either maxpage o
 String search_method = null;
 float alpha = 0.0f;
 float beta = 0.0f;
+TopDocs allHits = null;
 
 try {
   IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexName)));
@@ -117,25 +118,6 @@ if (error == false ) {                                  //did we open the index?
   try {
     QueryParser qp = new QueryParser("contents", analyzer);
     query = qp.parse(queryString.trim());         
-%>
-    <div class="notification is-info">
-      <div class="container">
-        <h6 class="subtitle">Searching for
-          <span class="title is-4">"<%=queryString%>" </span>
-          by 
-          <span class="title is-4"> "<%=search_method%>".
-<%
-    if(search_method.equals("MixScore")){
-%>
-      alpha = <%=alpha%>, beta = <%=beta%>
-<%
-    }
-%>
-          
-        </h6>
-      </div>
-    </div>
-<%
   } catch (ParseException e) {                          //parse the
                                                         //query and construct the Query
                                                         //object
@@ -159,6 +141,29 @@ if (error == false && searcher != null) {               // if we've had no error
                                                         // a weird compilation bug 
   thispage = maxpage;                                   // default last element to maxpage
   hits = searcher.search(query, maxpage + startindex);  // run the query 
+  allHits = searcher.search(query, hits.totalHits);
+  //out.println(allHits.scoreDocs.length);
+%>
+  <div class="notification is-info">
+    <div class="container">
+      <h6 class="subtitle">Searching for
+        <span class="title is-4">"<%=queryString%>" </span>
+        by 
+        <span class="title is-4"> "<%=search_method%>".
+<%
+  if(search_method.equals("MixScore")){
+%>
+      alpha = <%=alpha%>, beta = <%=beta%>.
+<%
+  }
+%>
+        </span>
+        <span class="subtitle"> About <span class="title is-4"><%=hits.totalHits%></span> results.</span>
+      </h6>
+    </div>
+  </div>
+
+<%
   if (hits.totalHits == 0) {                            // if we got no results tell the user
 %>
     <%@include file="jsp/cannotFind.jsp"%>
@@ -191,8 +196,8 @@ if (error == false && searcher != null) {
       continue;
     }
   }*/
-  for(int i = 0; i< hits.scoreDocs.length - 1; i++){
-    Document doc = searcher.doc(hits.scoreDocs[i].doc);
+  for(int i = 0; i< allHits.totalHits; i++){
+    Document doc = searcher.doc(allHits.scoreDocs[i].doc);
     if(doc.get("PageRank") != null){
       docPageRankMap.put(doc, Float.parseFloat(doc.get("PageRank")));
     }
@@ -205,13 +210,13 @@ if (error == false && searcher != null) {
 
   //Create doc map that sort by mix score of each document.
   Map<Document, Float> docMixScoreMap = new HashMap<Document, Float>();
-  for(int i = 0; i < hits.scoreDocs.length; i++){
-    Document doc = searcher.doc(hits.scoreDocs[i].doc);
+  for(int i = 0; i < allHits.totalHits; i++){
+    Document doc = searcher.doc(allHits.scoreDocs[i].doc);
     if(doc.get("PageRank") != null){
       //for(int j = 0; j < hits.scoreDocs.length; j++){
         //if(doc.get("URL").equals(searcher.doc(hits.scoreDocs[j].doc).get("URL"))){
           float pr = Float.parseFloat(doc.get("PageRank"));
-          float sim = hits.scoreDocs[i].score;
+          float sim = allHits.scoreDocs[i].score;
           //out.println(doc.get("URL"));
           //out.println("gg");
           //out.println(searcher.doc(hits.scoreDocs[j].doc).get("URL"));
@@ -241,10 +246,10 @@ if (error == false && searcher != null) {
   Map<Document, Float> docSortByMixScoreMap = sortByValue(docMixScoreMap);
   List<Document> docSortByMixScoreKeyList = new ArrayList<Document>(docSortByMixScoreMap.keySet());
 
-  //if ((startindex + maxpage) > hits.totalHits) {
-  if ((startindex + maxpage) > hits.scoreDocs.length) {
-          thispage = hits.scoreDocs.length - startindex;
-          //thispage = hits.totalHits - startindex;      // set the max index to maxpage or last
+  if ((startindex + maxpage) > hits.totalHits) {
+  //if ((startindex + maxpage) > hits.scoreDocs.length) {
+          //thispage = hits.scoreDocs.length - startindex;
+          thispage = hits.totalHits - startindex;      // set the max index to maxpage or last
   }                                                   // actual search result whichever is less
 
   for (int i = startindex; i < (thispage + startindex); i++) {  // for each element
