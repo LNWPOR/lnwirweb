@@ -14,7 +14,7 @@
                     <select name="search_method">
                         <option value="Similarity" selected="selected">Similarity</option>
                         <option value="PageRank">PageRank</option>
-                        <option value="MixScore">MixScore</option>
+                        <option value="MixScore">ReRank</option>
                     </select>
                 </span>
             </p>

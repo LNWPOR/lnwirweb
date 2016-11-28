@@ -3,7 +3,7 @@
 		    <div class="content has-text-centered">
 		      	<p>
 			        <strong>Power by</strong>
-			        Tomcat Lucene Bulma Jquery JSP Java C# 
+			        Tomcat Lucene Bulma Jquery JSP Java C# Python 
 			    </p>
 		    </div>
 		</div>
