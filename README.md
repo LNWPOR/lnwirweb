@@ -1,8 +1,8 @@
 # lnwirweb
 A website for IR subject that can search the web of KU Engineering from all previous program.
-* HwWs1-WebCrawler (https://github.com/LNWPOR/HwWs1-WebCrawler/edit/master/README.md)
-* HwWs2-IndexAndSearch (https://github.com/LNWPOR/HwWs2-IndexAndSearch)
-* HwWs3-PageRank (https://github.com/LNWPOR/HwWs3-PageRank)
+* [HwWs1-WebCrawler](https://github.com/LNWPOR/HwWs1-WebCrawler/edit/master/README.md)
+* [HwWs2-IndexAndSearch](https://github.com/LNWPOR/HwWs2-IndexAndSearch)
+* [HwWs3-PageRank](https://github.com/LNWPOR/HwWs3-PageRank)
 
 ## System Requirements
 * JDK 1.8
@@ -10,8 +10,8 @@ A website for IR subject that can search the web of KU Engineering from all prev
 * NPM<
 
 ## Configuration
-* You can change appTitle, indexLocation in configuration.jsp</h6>
-* Index : https://drive.google.com/file/d/0B9O0qfX4FFUwVEtTRmthZUcwU0k/view?usp=sharing</h6>
+* You can change appTitle, indexLocation in configuration.jsp
+* Index : https://drive.google.com/file/d/0B9O0qfX4FFUwVEtTRmthZUcwU0k/view?usp=sharing
 
 ## How to run
 * Put this folder in webapps folder of Tomcat
